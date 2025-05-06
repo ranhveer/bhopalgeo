@@ -1,14 +1,40 @@
+import { useJsApiLoader } from '@react-google-maps/api';
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bhopal GeoGuessr</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <h1>Bhopal GeoGuessr (Demo)</h1>
-  <p>This is a placeholder. Replace with your actual build files.</p>
-</body>
-</html>
+const GOOGLE_MAPS_API_KEY = 'YOUR_API_KEY_HERE';
+
+export default function GeoGuessBhopal() {
+  // ... existing state logic
+
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
+  });
+
+  useEffect(() => {
+    setTargetLocation(getRandomCoordinate());
+  }, []);
+
+  useEffect(() => {
+    if (isLoaded && targetLocation) {
+      new window.google.maps.StreetViewPanorama(
+        document.getElementById('street-view'),
+        {
+          position: {
+            lat: targetLocation[0],
+            lng: targetLocation[1],
+          },
+          pov: { heading: 165, pitch: 0 },
+          zoom: 1,
+        }
+      );
+    }
+  }, [isLoaded, targetLocation]);
+
+  return (
+    <div className="flex w-full h-screen">
+      <div id="street-view" className="w-1/2 h-full" />
+      <div className="w-1/2 h-full">
+        {/* Leaflet map and result UI goes here */}
+      </div>
+    </div>
+  );
+}
